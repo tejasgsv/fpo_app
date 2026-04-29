@@ -17,6 +17,7 @@ class MockFarmerService implements FarmerService {
             village: 'Bhavani Nagar',
             landDetails: '3.5 acres, irrigated',
             cropDetails: 'Wheat and mustard',
+            fpoName: 'Sahyadri FPO',
           ),
           const Farmer(
             id: 'farmer_2',
@@ -24,6 +25,7 @@ class MockFarmerService implements FarmerService {
             village: 'Kheda',
             landDetails: '2.1 acres, rain-fed',
             cropDetails: 'Cotton and groundnut',
+            fpoName: 'Krushi Mitra FPO',
           ),
           const Farmer(
             id: 'farmer_3',
@@ -31,6 +33,7 @@ class MockFarmerService implements FarmerService {
             village: 'Barabanki',
             landDetails: '4.0 acres, mixed soil',
             cropDetails: 'Rice, vegetables, pulses',
+            fpoName: 'Delta Farmers FPO',
           ),
         ];
 
@@ -45,6 +48,7 @@ class MockFarmerService implements FarmerService {
       village: draft.village,
       landDetails: draft.landDetails,
       cropDetails: draft.cropDetails,
+      fpoName: draft.fpoName,
     );
     _farmers.insert(0, farmer);
     return farmer;

@@ -1,3 +1,9 @@
+enum ListingStatus {
+  live,
+  blocked,
+  removed,
+}
+
 class ProductListing {
   const ProductListing({
     required this.id,
@@ -8,6 +14,7 @@ class ProductListing {
     required this.fpoName,
     required this.availableDate,
     required this.description,
+    this.status = ListingStatus.live,
   });
 
   final String id;
@@ -18,6 +25,31 @@ class ProductListing {
   final String fpoName;
   final DateTime availableDate;
   final String description;
+  final ListingStatus status;
+
+  ProductListing copyWith({
+    String? id,
+    String? cropName,
+    String? quantity,
+    String? quality,
+    String? location,
+    String? fpoName,
+    DateTime? availableDate,
+    String? description,
+    ListingStatus? status,
+  }) {
+    return ProductListing(
+      id: id ?? this.id,
+      cropName: cropName ?? this.cropName,
+      quantity: quantity ?? this.quantity,
+      quality: quality ?? this.quality,
+      location: location ?? this.location,
+      fpoName: fpoName ?? this.fpoName,
+      availableDate: availableDate ?? this.availableDate,
+      description: description ?? this.description,
+      status: status ?? this.status,
+    );
+  }
 }
 
 class ProductDraft {

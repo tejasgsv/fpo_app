@@ -1,3 +1,5 @@
+import '../../../core/state/platform_store.dart';
+
 class RegistrationSubmission {
   const RegistrationSubmission({
     required this.fpoName,
@@ -35,11 +37,25 @@ abstract class RegistrationService {
 }
 
 class MockRegistrationService implements RegistrationService {
+  MockRegistrationService({required this.platformStore});
+
+  final PlatformStore platformStore;
+
   @override
   Future<RegistrationReceipt> submit(RegistrationSubmission submission) async {
     await Future<void>.delayed(const Duration(milliseconds: 1000));
+    final application = platformStore.upsertApplication(
+      fpoName: submission.fpoName,
+      registrationNumber: submission.registrationNumber,
+      state: submission.state,
+      district: submission.district,
+      address: submission.address,
+      mobileNumber: submission.mobileNumber,
+      certificateName: submission.certificateName,
+      additionalDocumentName: submission.additionalDocumentName,
+    );
     return RegistrationReceipt(
-      applicationId: 'APP-${DateTime.now().millisecondsSinceEpoch}',
+      applicationId: application.id,
       status: 'Pending Approval',
     );
   }

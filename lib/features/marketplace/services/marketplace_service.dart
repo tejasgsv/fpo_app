@@ -1,3 +1,4 @@
+import '../../../core/state/platform_store.dart';
 import '../models/product_listing.dart';
 
 abstract class MarketplaceService {
@@ -8,51 +9,22 @@ abstract class MarketplaceService {
   Future<void> sendRequest({required String productId, required String message});
 
   Future<int> fetchIncomingRequestCount();
+
+  Future<void> removeListing(String listingId);
+
+  Future<void> blockListing(String listingId);
 }
 
 class MockMarketplaceService implements MarketplaceService {
-  MockMarketplaceService()
-      : _listings = [
-          ProductListing(
-            id: 'listing_1',
-            cropName: 'Organic Wheat',
-            quantity: '45 quintals',
-            quality: 'Grade A',
-            location: 'Maharashtra - Pune',
-            fpoName: 'Sahyadri FPO',
-            availableDate: DateTime.now().add(const Duration(days: 4)),
-            description: 'Cleaned and bagged wheat ready for institutional supply.',
-          ),
-          ProductListing(
-            id: 'listing_2',
-            cropName: 'Fresh Tomato',
-            quantity: '18 tonnes',
-            quality: 'Premium',
-            location: 'Gujarat - Surat',
-            fpoName: 'Krushi Mitra FPO',
-            availableDate: DateTime.now().add(const Duration(days: 2)),
-            description: 'Harvested this week and suitable for bulk logistics.',
-          ),
-          ProductListing(
-            id: 'listing_3',
-            cropName: 'Turmeric Finger',
-            quantity: '12 quintals',
-            quality: 'A Grade',
-            location: 'Tamil Nadu - Madurai',
-            fpoName: 'Delta Farmers FPO',
-            availableDate: DateTime.now().add(const Duration(days: 8)),
-            description: 'Well dried turmeric with uniform finger size and color.',
-          ),
-        ];
+  MockMarketplaceService({required this.platformStore});
 
-  final List<ProductListing> _listings;
+  final PlatformStore platformStore;
   final List<MarketplaceRequest> _requests = [];
 
   @override
   Future<ProductListing> addListing(ProductDraft draft) async {
     await Future<void>.delayed(const Duration(milliseconds: 700));
-    final listing = ProductListing(
-      id: 'listing_${DateTime.now().millisecondsSinceEpoch}',
+    final listing = platformStore.upsertListing(
       cropName: draft.cropName,
       quantity: draft.quantity,
       quality: draft.quality,
@@ -61,7 +33,6 @@ class MockMarketplaceService implements MarketplaceService {
       availableDate: draft.availableDate,
       description: draft.description,
     );
-    _listings.insert(0, listing);
     return listing;
   }
 
@@ -74,7 +45,7 @@ class MockMarketplaceService implements MarketplaceService {
   @override
   Future<List<ProductListing>> fetchListings() async {
     await Future<void>.delayed(const Duration(milliseconds: 450));
-    return List<ProductListing>.unmodifiable(_listings);
+    return platformStore.fetchListings();
   }
 
   @override
@@ -89,5 +60,17 @@ class MockMarketplaceService implements MarketplaceService {
         createdAt: DateTime.now(),
       ),
     );
+  }
+
+  @override
+  Future<void> removeListing(String listingId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 220));
+    platformStore.updateListingStatus(listingId, ListingStatus.removed);
+  }
+
+  @override
+  Future<void> blockListing(String listingId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 220));
+    platformStore.updateListingStatus(listingId, ListingStatus.blocked);
   }
 }

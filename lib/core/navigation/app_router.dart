@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 
+import '../../features/admin/screens/admin_dashboard_screen.dart';
+import '../../features/admin/screens/admin_analytics_screen.dart';
+import '../../features/admin/screens/admin_contributor_control_screen.dart';
+import '../../features/admin/screens/admin_farmer_data_screen.dart';
+import '../../features/admin/screens/admin_chat_monitoring_screen.dart';
+import '../../features/admin/screens/admin_fpo_management_screen.dart';
+import '../../features/admin/screens/admin_marketplace_control_screen.dart';
 import '../../features/auth/screens/fpo_registration_flow_screen.dart';
+import '../../features/auth/screens/access_status_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/success_screen.dart';
 import '../constants/app_routes.dart';
 import '../di/app_services.dart';
+import '../../features/auth/services/auth_service.dart';
 import '../../features/chat/models/chat_models.dart';
 import '../../features/chat/screens/chat_list_screen.dart';
 import '../../features/chat/screens/conversation_screen.dart';
@@ -66,6 +75,55 @@ class AppRouter {
       case AppRoutes.success:
         return MaterialPageRoute(
           builder: (_) => const SuccessScreen(),
+          settings: settings,
+        );
+      case AppRoutes.fpoAccessStatus:
+        return MaterialPageRoute(
+          builder: (_) {
+            final session = settings.arguments as AuthSession? ?? AuthSession(
+              token: '',
+              role: PlatformRole.fpo,
+              accountId: '',
+              displayName: 'FPO',
+              accountStatus: FpoApplicationStatus.pending,
+            );
+            return AccessStatusScreen(session: session);
+          },
+          settings: settings,
+        );
+      case AppRoutes.adminDashboard:
+        return MaterialPageRoute(
+          builder: (_) => AdminDashboardScreen(adminService: _services.adminService),
+          settings: settings,
+        );
+      case AppRoutes.adminFarmerData:
+        return MaterialPageRoute(
+          builder: (_) => AdminFarmerDataScreen(farmerService: _services.farmerService),
+          settings: settings,
+        );
+      case AppRoutes.adminContributorControl:
+        return MaterialPageRoute(
+          builder: (_) => AdminContributorControlScreen(contributorService: _services.contributorService),
+          settings: settings,
+        );
+      case AppRoutes.adminFpoManagement:
+        return MaterialPageRoute(
+          builder: (_) => AdminFpoManagementScreen(adminService: _services.adminService),
+          settings: settings,
+        );
+      case AppRoutes.adminMarketplaceControl:
+        return MaterialPageRoute(
+          builder: (_) => AdminMarketplaceControlScreen(adminService: _services.adminService),
+          settings: settings,
+        );
+      case AppRoutes.adminChatMonitoring:
+        return MaterialPageRoute(
+          builder: (_) => AdminChatMonitoringScreen(adminService: _services.adminService),
+          settings: settings,
+        );
+      case AppRoutes.adminAnalytics:
+        return MaterialPageRoute(
+          builder: (_) => AdminAnalyticsScreen(adminService: _services.adminService),
           settings: settings,
         );
       case AppRoutes.dashboard:

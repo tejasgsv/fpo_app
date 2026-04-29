@@ -5,6 +5,7 @@ class Farmer {
     required this.village,
     required this.landDetails,
     required this.cropDetails,
+    this.fpoName = 'Current FPO',
   });
 
   final String id;
@@ -12,6 +13,7 @@ class Farmer {
   final String village;
   final String landDetails;
   final String cropDetails;
+  final String fpoName;
 }
 
 class FarmerDraft {
@@ -20,10 +22,12 @@ class FarmerDraft {
     required this.village,
     required this.landDetails,
     required this.cropDetails,
+    this.fpoName = 'Current FPO',
   });
 
   final String name;
   final String village;
   final String landDetails;
   final String cropDetails;
+  final String fpoName;
 }

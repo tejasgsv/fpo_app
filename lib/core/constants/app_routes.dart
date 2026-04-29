@@ -8,7 +8,15 @@ class AppRoutes {
   static const String registerFpoStep3 = '/register-fpo/step3';
   static const String registerFpoStep4 = '/register-fpo/step4';
   static const String success = '/success';
+  static const String fpoAccessStatus = '/fpo/status';
   static const String dashboard = '/dashboard';
+  static const String adminDashboard = '/admin';
+  static const String adminFarmerData = '/admin/farmers';
+  static const String adminContributorControl = '/admin/contributors';
+  static const String adminFpoManagement = '/admin/fpo-management';
+  static const String adminMarketplaceControl = '/admin/marketplace-control';
+  static const String adminChatMonitoring = '/admin/chat-monitoring';
+  static const String adminAnalytics = '/admin/analytics';
   static const String farmers = '/farmers';
   static const String farmerProfile = '/farmers/profile';
   static const String contributors = '/contributors';

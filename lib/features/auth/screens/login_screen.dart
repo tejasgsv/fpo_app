@@ -4,6 +4,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/state/platform_store.dart';
 import '../services/auth_service.dart';
 import '../widgets/app_card.dart';
 import '../widgets/app_text_field.dart';
@@ -79,7 +80,17 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text(AppStrings.authSuccess)),
       );
 
-      Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard, arguments: session.token);
+      if (session.role == PlatformRole.admin) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.adminDashboard, arguments: session);
+        return;
+      }
+
+      if (session.accountStatus == FpoApplicationStatus.active) {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard, arguments: session);
+        return;
+      }
+
+      Navigator.of(context).pushReplacementNamed(AppRoutes.fpoAccessStatus, arguments: session);
     } catch (_) {
       if (!mounted) {
         return;
@@ -128,6 +139,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         Text(
                           AppStrings.loginSubtitle,
                           style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Admin login: admin@fpo.local | FPO login: registration number or FPO name',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
                         ),
                         const SizedBox(height: 24),
                         AppTextField(
@@ -254,7 +270,7 @@ class _LoginHeader extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  AppStrings.loginHeaderDescription,
+                      'Role-aware entry for super admin and approved FPO teams.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                 ),
               ),
