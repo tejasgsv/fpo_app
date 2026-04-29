@@ -93,3 +93,7 @@ The app uses in-memory mock services to keep the UI API-ready without hardcoding
 ```bash
 flutter run -d chrome
 ```
+
+## GitHub Repo
+
+https://github.com/tejasgsv/fpo_app
