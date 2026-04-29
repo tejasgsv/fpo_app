@@ -26,7 +26,7 @@ class SuccessScreen extends StatelessWidget {
                       height: 72,
                       width: 72,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(

@@ -19,185 +19,179 @@ class LoginScreen extends StatefulWidget {
   final AuthService authService;
 
   @override
-              child: Column(
-                children: [
-                  _LoginHeader(
-                    onRegisterPressed: () {
-                      Navigator.of(context).pushNamed(AppRoutes.registerFpo);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 560),
-                      child: AppCard(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppStrings.loginTitle,
-                                style: Theme.of(context).textTheme.headlineSmall,
-                          State<LoginScreen> createState() => _LoginScreenState();
-                              const SizedBox(height: 8),
-                              Text(
-                                AppStrings.loginSubtitle,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              const SizedBox(height: 24),
-                              AppTextField(
-                                controller: _userIdController,
-                                labelText: AppStrings.userIdLabel,
-                                hintText: AppStrings.userIdHint,
-                                validator: AppValidators.userIdOrEmail,
-                                keyboardType: TextInputType.emailAddress,
-                                prefixIcon: Icons.person_outline,
-                              ),
-                              const SizedBox(height: 16),
-                              AppTextField(
-                                controller: _passwordController,
-                                labelText: AppStrings.passwordLabel,
-                                hintText: AppStrings.passwordHint,
-                                validator: AppValidators.password,
-                                obscureText: _obscurePassword,
-                                prefixIcon: Icons.lock_outline,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscurePassword = !_obscurePassword;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text(AppStrings.passwordRecoverySoon)),
-                                    );
-                                  },
-                                  child: const Text(AppStrings.forgotPassword),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              PrimaryButton(
-                                label: AppStrings.login,
-                                isLoading: _isSubmitting,
-                                onPressed: _canSubmit && !_isSubmitting ? _submit : null,
-                              ),
-                              const SizedBox(height: 16),
-                              const Divider(),
-                              const SizedBox(height: 16),
-                              SecondaryButton(
-                                label: AppStrings.registerFpo,
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed(AppRoutes.registerFpo);
-                                },
-                              ),
-                            ],
-                          ),
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _isSubmitting = false;
+
+  bool get _canSubmit {
+    return AppValidators.userIdOrEmail(_userIdController.text) == null &&
+        AppValidators.password(_passwordController.text) == null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userIdController.addListener(_refreshUi);
+    _passwordController.addListener(_refreshUi);
+  }
+
+  @override
+  void dispose() {
+    _userIdController.removeListener(_refreshUi);
+    _passwordController.removeListener(_refreshUi);
+    _userIdController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _refreshUi() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final session = await widget.authService.login(
+        userIdOrEmail: _userIdController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.authSuccess)),
+      );
+
+      Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard, arguments: session.token);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.authError)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppConstants.screenHorizontalPadding),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _LoginHeader(
+                onRegisterPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.registerFpo);
+                },
+              ),
+              const SizedBox(height: 24),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: AppCard(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.loginTitle,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-                      ),
-                      const SizedBox(height: 24),
-                      Expanded(
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 560),
-                            child: AppCard(
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      AppStrings.loginTitle,
-                                      style: Theme.of(context).textTheme.headlineSmall,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      AppStrings.loginSubtitle,
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                    const SizedBox(height: 24),
-                                    AppTextField(
-                                      controller: _userIdController,
-                                      labelText: AppStrings.userIdLabel,
-                                      hintText: AppStrings.userIdHint,
-                                      validator: AppValidators.userIdOrEmail,
-                                      keyboardType: TextInputType.emailAddress,
-                                      prefixIcon: Icons.person_outline,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    AppTextField(
-                                      controller: _passwordController,
-                                      labelText: AppStrings.passwordLabel,
-                                      hintText: AppStrings.passwordHint,
-                                      validator: AppValidators.password,
-                                      obscureText: _obscurePassword,
-                                      prefixIcon: Icons.lock_outline,
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _obscurePassword
-                                              ? Icons.visibility_outlined
-                                              : Icons.visibility_off_outlined,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _obscurePassword = !_obscurePassword;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: TextButton(
-                                        onPressed: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('Password recovery will be connected later.')),
-                                          );
-                                        },
-                                        child: const Text(AppStrings.forgotPassword),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    PrimaryButton(
-                                      label: AppStrings.login,
-                                      isLoading: _isSubmitting,
-                                      onPressed: _canSubmit && !_isSubmitting ? _submit : null,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const Divider(),
-                                    const SizedBox(height: 16),
-                                    SecondaryButton(
-                                      label: AppStrings.registerFpo,
-                                      onPressed: () {
-                                        Navigator.of(context).pushNamed(AppRoutes.registerFpo);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        const SizedBox(height: 8),
+                        Text(
+                          AppStrings.loginSubtitle,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 24),
+                        AppTextField(
+                          controller: _userIdController,
+                          labelText: AppStrings.userIdLabel,
+                          hintText: AppStrings.userIdHint,
+                          validator: AppValidators.userIdOrEmail,
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: Icons.person_outline,
+                        ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _passwordController,
+                          labelText: AppStrings.passwordLabel,
+                          hintText: AppStrings.passwordHint,
+                          validator: AppValidators.password,
+                          obscureText: _obscurePassword,
+                          prefixIcon: Icons.lock_outline,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
                             ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
                           ),
                         ),
-                      ),
-                    ],
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text(AppStrings.passwordRecoverySoon)),
+                              );
+                            },
+                            child: const Text(AppStrings.forgotPassword),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        PrimaryButton(
+                          label: AppStrings.login,
+                          isLoading: _isSubmitting,
+                          onPressed: _canSubmit && !_isSubmitting ? _submit : null,
+                        ),
+                        const SizedBox(height: 16),
+                        const Divider(),
+                        const SizedBox(height: 16),
+                        SecondaryButton(
+                          label: AppStrings.registerFpo,
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(AppRoutes.registerFpo);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
@@ -265,13 +259,16 @@ class _LoginHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              FilledButton(
-                onPressed: onRegisterPressed,
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF2E7D32),
+              SizedBox(
+                width: 172,
+                child: FilledButton(
+                  onPressed: onRegisterPressed,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF2E7D32),
+                  ),
+                  child: const Text(AppStrings.registerFpo),
                 ),
-                child: const Text(AppStrings.registerFpo),
               ),
             ],
           ),

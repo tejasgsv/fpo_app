@@ -1,41 +1,95 @@
-# FPO Digital Platform Auth UI
+# FPO Digital Platform
 
-This Flutter app now contains a clean authentication foundation for an FPO digital platform.
+This Flutter app is an FPO-to-FPO operational platform with a clean green agriculture theme, API-ready services, and a modular architecture.
 
 ## What is included
 
-The app starts on the login screen, then navigates to a 4-step FPO registration flow and a submission success screen. The dashboard is a placeholder so the login flow has a clear post-auth destination.
+- Authentication flow with login
+- 4-step FPO registration flow
+- FPO dashboard as the main post-login entry point
+- Farmer management
+- Contributor management with role and permission controls
+- Marketplace without prices or payments
+- Chat and communication screens
+- Placeholder inventory and reports modules
 
-## Folder structure
+## Product Rules
 
-- `lib/core/theme/` contains the design system colors and `ThemeData`
-- `lib/core/constants/` contains routes, UI strings, and shared sizing constants
-- `lib/core/navigation/` contains the route generator
-- `lib/core/di/` contains the app service wiring
-- `lib/features/auth/screens/` contains login, registration, dashboard, and success screens
-- `lib/features/auth/widgets/` contains reusable auth UI widgets
-- `lib/features/auth/services/` contains API-ready service interfaces and mock implementations
+- No price fields anywhere in the marketplace
+- No payment flow
+- Use contact, request, and chat for collaboration
+- Keep all data access behind service interfaces
 
-## Theme updates
+## Navigation Flow
 
-To adjust the visual system, edit `lib/core/theme/app_colors.dart` and `lib/core/theme/app_theme.dart`. The UI uses the theme for colors, spacing, buttons, cards, inputs, and snackbars.
+Login -> FPO Dashboard -> Modules
 
-## Backend integration later
+From the dashboard, users can open:
 
-Replace the mock implementations in `lib/features/auth/services/` with real API clients while keeping the same interfaces. The login screen already stores a token through the service layer, and the registration flow already submits a structured request object, so the UI should not need major changes.
-# fpo_app
+- Farmer Management
+- Contributor Management
+- Marketplace
+- Communication
+- Inventory placeholder
+- Reports placeholder
 
-A new Flutter project.
+Marketplace actions use direct collaboration only:
 
-## Getting Started
+- Contact FPO
+- Send Request
+- Chat
 
-This project is a starting point for a Flutter application.
+## File-by-File Overview
 
-A few resources to get you started if this is your first Flutter project:
+### Core
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [lib/core/constants/app_routes.dart](lib/core/constants/app_routes.dart) defines all route names
+- [lib/core/constants/app_strings.dart](lib/core/constants/app_strings.dart) contains shared UI strings
+- [lib/core/di/app_services.dart](lib/core/di/app_services.dart) wires the mock services together
+- [lib/core/navigation/app_router.dart](lib/core/navigation/app_router.dart) maps routes to screens
+- [lib/core/theme/app_theme.dart](lib/core/theme/app_theme.dart) and [lib/core/theme/app_colors.dart](lib/core/theme/app_colors.dart) define the visual system
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Dashboard
+
+- [lib/features/fpo_dashboard/screens/dashboard_screen.dart](lib/features/fpo_dashboard/screens/dashboard_screen.dart) is the operational dashboard
+- [lib/features/fpo_dashboard/screens/farmer_management_screen.dart](lib/features/fpo_dashboard/screens/farmer_management_screen.dart) manages farmer records
+- [lib/features/fpo_dashboard/screens/farmer_profile_screen.dart](lib/features/fpo_dashboard/screens/farmer_profile_screen.dart) shows farmer details
+- [lib/features/fpo_dashboard/screens/module_placeholder_screen.dart](lib/features/fpo_dashboard/screens/module_placeholder_screen.dart) handles inventory and reports placeholders
+- [lib/features/fpo_dashboard/models/farmer.dart](lib/features/fpo_dashboard/models/farmer.dart) defines farmer data models
+- [lib/features/fpo_dashboard/services/farmer_service.dart](lib/features/fpo_dashboard/services/farmer_service.dart) contains the mock farmer API
+
+### Contributors
+
+- [lib/features/contributors/screens/contributor_management_screen.dart](lib/features/contributors/screens/contributor_management_screen.dart) manages sub-users and permissions
+- [lib/features/contributors/models/contributor.dart](lib/features/contributors/models/contributor.dart) defines contributor and permission models
+- [lib/features/contributors/services/contributor_service.dart](lib/features/contributors/services/contributor_service.dart) contains the mock contributor API
+
+### Marketplace
+
+- [lib/features/marketplace/screens/marketplace_screen.dart](lib/features/marketplace/screens/marketplace_screen.dart) shows crop listings without prices
+- [lib/features/marketplace/screens/add_product_screen.dart](lib/features/marketplace/screens/add_product_screen.dart) adds a new crop listing
+- [lib/features/marketplace/models/product_listing.dart](lib/features/marketplace/models/product_listing.dart) defines listing data models
+- [lib/features/marketplace/services/marketplace_service.dart](lib/features/marketplace/services/marketplace_service.dart) contains the mock marketplace API
+
+### Chat
+
+- [lib/features/chat/screens/chat_list_screen.dart](lib/features/chat/screens/chat_list_screen.dart) shows conversations
+- [lib/features/chat/screens/conversation_screen.dart](lib/features/chat/screens/conversation_screen.dart) shows the chat thread view
+- [lib/features/chat/models/chat_models.dart](lib/features/chat/models/chat_models.dart) defines chat thread and message models
+- [lib/features/chat/services/chat_service.dart](lib/features/chat/services/chat_service.dart) contains the mock chat API
+
+### Existing Auth Flow
+
+- [lib/features/auth/screens/login_screen.dart](lib/features/auth/screens/login_screen.dart) remains the entry screen
+- [lib/features/auth/screens/fpo_registration_flow_screen.dart](lib/features/auth/screens/fpo_registration_flow_screen.dart) contains the registration flow
+- [lib/features/auth/screens/success_screen.dart](lib/features/auth/screens/success_screen.dart) shows registration completion
+
+## Mock Data Strategy
+
+The app uses in-memory mock services to keep the UI API-ready without hardcoding business logic into screens. Replace the mock service implementations in the feature service folders when real endpoints are available.
+
+## Run
+
+```bash
+flutter run -d chrome
+```

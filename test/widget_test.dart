@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:fpo_app/main.dart';
+import 'package:fpo_app/app.dart';
 
 void main() {
   testWidgets('shows the login screen', (WidgetTester tester) async {

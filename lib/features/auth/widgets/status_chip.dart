@@ -14,7 +14,7 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color background = isActive ? AppColors.primary.withOpacity(0.12) : const Color(0xFFF1F1F1);
+    final Color background = isActive ? AppColors.primary.withValues(alpha: 0.12) : const Color(0xFFF1F1F1);
     final Color foreground = isActive ? AppColors.primary : AppColors.textSecondary;
 
     return Container(

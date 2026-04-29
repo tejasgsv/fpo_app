@@ -42,19 +42,25 @@ class _FpoRegistrationFlowScreenState extends State<FpoRegistrationFlowScreen> {
   final TextEditingController _otpController = TextEditingController();
 
   final List<String> _states = const [
+    AppStrings.stateMaharashtra,
+    AppStrings.stateGujarat,
+    AppStrings.stateKarnataka,
+    AppStrings.stateTamilNadu,
+    AppStrings.stateUttarPradesh,
+    AppStrings.stateRajasthan,
+    AppStrings.stateWestBengal,
     AppStrings.statePunjab,
-    AppStrings.stateSindh,
-    AppStrings.stateKpk,
-    AppStrings.stateBalochistan,
-    AppStrings.stateIslamabad,
   ];
 
   final Map<String, List<String>> _districtsByState = const {
-    AppStrings.statePunjab: ['Lahore', 'Multan', 'Faisalabad'],
-    AppStrings.stateSindh: ['Karachi', 'Hyderabad', 'Sukkur'],
-    AppStrings.stateKpk: ['Peshawar', 'Mardan', 'Swat'],
-    AppStrings.stateBalochistan: ['Quetta', 'Khuzdar', 'Gwadar'],
-    AppStrings.stateIslamabad: ['Islamabad'],
+    AppStrings.stateMaharashtra: ['Pune', 'Nashik', 'Nagpur'],
+    AppStrings.stateGujarat: ['Ahmedabad', 'Surat', 'Vadodara'],
+    AppStrings.stateKarnataka: ['Bengaluru Urban', 'Mysuru', 'Mangaluru'],
+    AppStrings.stateTamilNadu: ['Chennai', 'Coimbatore', 'Madurai'],
+    AppStrings.stateUttarPradesh: ['Lucknow', 'Kanpur Nagar', 'Varanasi'],
+    AppStrings.stateRajasthan: ['Jaipur', 'Jodhpur', 'Udaipur'],
+    AppStrings.stateWestBengal: ['Kolkata', 'Howrah', 'Darjeeling'],
+    AppStrings.statePunjab: ['Ludhiana', 'Amritsar', 'Jalandhar'],
   };
 
   int _currentStep = 0;
@@ -342,87 +348,89 @@ class _FpoRegistrationFlowScreenState extends State<FpoRegistrationFlowScreen> {
     return Form(
       key: _basicInfoKey,
       child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SectionHeader(
-              title: AppStrings.basicInfoStep,
-              subtitle: AppStrings.basicInfoSubtitle,
-            ),
-            const SizedBox(height: 16),
-            AppTextField(
-              controller: _fpoNameController,
-              labelText: AppStrings.fpoNameLabel,
-              hintText: AppStrings.fpoNameHint,
-              validator: AppValidators.requiredValue,
-              prefixIcon: Icons.apartment_outlined,
-            ),
-            const SizedBox(height: 16),
-            AppTextField(
-              controller: _registrationNumberController,
-              labelText: AppStrings.registrationNumberLabel,
-              hintText: AppStrings.registrationNumberHint,
-              validator: AppValidators.requiredValue,
-              prefixIcon: Icons.confirmation_number_outlined,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedState,
-              decoration: const InputDecoration(labelText: AppStrings.stateLabel),
-              items: _states
-                  .map((state) => DropdownMenuItem<String>(value: state, child: Text(state)))
-                  .toList(),
-              validator: (value) => value == null ? AppStrings.requiredFieldError : null,
-              onChanged: (value) {
-                setState(() {
-                  _selectedState = value;
-                  _selectedDistrict = null;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedDistrict,
-              decoration: const InputDecoration(labelText: AppStrings.districtLabel),
-              items: _districtOptions
-                  .map((district) => DropdownMenuItem<String>(value: district, child: Text(district)))
-                  .toList(),
-              validator: (value) => value == null ? AppStrings.requiredFieldError : null,
-              onChanged: _selectedState == null
-                  ? null
-                  : (value) {
-                      setState(() {
-                        _selectedDistrict = value;
-                      });
-                    },
-            ),
-            const SizedBox(height: 16),
-            AppTextField(
-              controller: _addressController,
-              labelText: AppStrings.addressLabel,
-              hintText: AppStrings.addressHint,
-              validator: AppValidators.requiredValue,
-              prefixIcon: Icons.location_on_outlined,
-              maxLines: 3,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: PrimaryButton(
-                    label: AppStrings.next,
-                    onPressed: _step1Ready
-                        ? () {
-                            if (_basicInfoKey.currentState!.validate()) {
-                              _goToStep(1);
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionHeader(
+                title: AppStrings.basicInfoStep,
+                subtitle: AppStrings.basicInfoSubtitle,
+              ),
+              const SizedBox(height: 16),
+              AppTextField(
+                controller: _fpoNameController,
+                labelText: AppStrings.fpoNameLabel,
+                hintText: AppStrings.fpoNameHint,
+                validator: AppValidators.requiredValue,
+                prefixIcon: Icons.apartment_outlined,
+              ),
+              const SizedBox(height: 16),
+              AppTextField(
+                controller: _registrationNumberController,
+                labelText: AppStrings.registrationNumberLabel,
+                hintText: AppStrings.registrationNumberHint,
+                validator: AppValidators.requiredValue,
+                prefixIcon: Icons.confirmation_number_outlined,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedState,
+                decoration: const InputDecoration(labelText: AppStrings.stateLabel),
+                items: _states
+                    .map((state) => DropdownMenuItem<String>(value: state, child: Text(state)))
+                    .toList(),
+                validator: (value) => value == null ? AppStrings.requiredFieldError : null,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedState = value;
+                    _selectedDistrict = null;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedDistrict,
+                decoration: const InputDecoration(labelText: AppStrings.districtLabel),
+                items: _districtOptions
+                    .map((district) => DropdownMenuItem<String>(value: district, child: Text(district)))
+                    .toList(),
+                validator: (value) => value == null ? AppStrings.requiredFieldError : null,
+                onChanged: _selectedState == null
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _selectedDistrict = value;
+                        });
+                      },
+              ),
+              const SizedBox(height: 16),
+              AppTextField(
+                controller: _addressController,
+                labelText: AppStrings.addressLabel,
+                hintText: AppStrings.addressHint,
+                validator: AppValidators.requiredValue,
+                prefixIcon: Icons.location_on_outlined,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: PrimaryButton(
+                      label: AppStrings.next,
+                      onPressed: _step1Ready
+                          ? () {
+                              if (_basicInfoKey.currentState!.validate()) {
+                                _goToStep(1);
+                              }
                             }
-                          }
-                        : null,
+                          : null,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -432,51 +440,105 @@ class _FpoRegistrationFlowScreenState extends State<FpoRegistrationFlowScreen> {
     return Form(
       key: _contactKey,
       child: AppCard(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionHeader(
+                title: AppStrings.contactOtpStep,
+                subtitle: AppStrings.contactSubtitle,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  StatusChip(label: _otpSending ? AppStrings.sendingOtp : AppStrings.otpSent, isActive: _otpSent),
+                  const SizedBox(width: 8),
+                  StatusChip(label: AppStrings.verified, isActive: _otpVerified),
+                ],
+              ),
+              const SizedBox(height: 16),
+              AppTextField(
+                controller: _mobileController,
+                labelText: AppStrings.mobileLabel,
+                hintText: AppStrings.mobileHint,
+                validator: AppValidators.mobile,
+                keyboardType: TextInputType.phone,
+                prefixIcon: Icons.phone_outlined,
+              ),
+              const SizedBox(height: 12),
+              SecondaryButton(
+                label: _otpSending ? AppStrings.sendingOtp : AppStrings.sendOtp,
+                isBusy: _otpSending,
+                onPressed: _otpSending || _otpVerified ? null : _sendOtp,
+              ),
+              const SizedBox(height: 20),
+              AppTextField(
+                controller: _otpController,
+                labelText: AppStrings.otpLabel,
+                hintText: AppStrings.otpHint,
+                validator: AppValidators.otp,
+                keyboardType: TextInputType.number,
+                prefixIcon: Icons.pin_outlined,
+              ),
+              const SizedBox(height: 8),
+              const Text(AppStrings.otpVerificationHint),
+              const SizedBox(height: 12),
+              PrimaryButton(
+                label: AppStrings.verifyOtp,
+                onPressed: _otpSent && !_otpVerified ? _verifyOtp : null,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: SecondaryButton(
+                      label: AppStrings.previous,
+                      onPressed: () => _goToStep(0),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: AppStrings.next,
+                      onPressed: _step2Ready
+                          ? () {
+                              _goToStep(2);
+                            }
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepThree(BuildContext context) {
+    return AppCard(
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SectionHeader(
-              title: AppStrings.contactOtpStep,
-              subtitle: AppStrings.contactSubtitle,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                StatusChip(label: _otpSending ? AppStrings.sendingOtp : AppStrings.otpSent, isActive: _otpSent),
-                const SizedBox(width: 8),
-                StatusChip(label: AppStrings.verified, isActive: _otpVerified),
-              ],
+              title: AppStrings.documentsStep,
+              subtitle: AppStrings.documentsSubtitle,
             ),
             const SizedBox(height: 16),
-            AppTextField(
-              controller: _mobileController,
-              labelText: AppStrings.mobileLabel,
-              hintText: AppStrings.mobileHint,
-              validator: AppValidators.mobile,
-              keyboardType: TextInputType.phone,
-              prefixIcon: Icons.phone_outlined,
+            UploadCard(
+              title: AppStrings.uploadCertificate,
+              description: AppStrings.uploadHint,
+              fileName: _certificateFileName,
+              onPressed: () => _pickMockFile(isPrimary: true),
             ),
             const SizedBox(height: 12),
-            SecondaryButton(
-              label: _otpSending ? AppStrings.sendingOtp : AppStrings.sendOtp,
-              isBusy: _otpSending,
-              onPressed: _otpSending || _otpVerified ? null : _sendOtp,
-            ),
-            const SizedBox(height: 20),
-            AppTextField(
-              controller: _otpController,
-              labelText: AppStrings.otpLabel,
-              hintText: AppStrings.otpHint,
-              validator: AppValidators.otp,
-              keyboardType: TextInputType.number,
-              prefixIcon: Icons.pin_outlined,
-            ),
-            const SizedBox(height: 8),
-            const Text(AppStrings.otpVerificationHint),
-            const SizedBox(height: 12),
-            PrimaryButton(
-              label: AppStrings.verifyOtp,
-              onPressed: _otpSent && !_otpVerified ? _verifyOtp : null,
+            UploadCard(
+              title: AppStrings.additionalDocument,
+              description: AppStrings.additionalDocumentOptional,
+              fileName: _additionalDocumentFileName,
+              onPressed: () => _pickMockFile(isPrimary: false),
             ),
             const SizedBox(height: 20),
             Row(
@@ -484,16 +546,16 @@ class _FpoRegistrationFlowScreenState extends State<FpoRegistrationFlowScreen> {
                 Expanded(
                   child: SecondaryButton(
                     label: AppStrings.previous,
-                    onPressed: () => _goToStep(0),
+                    onPressed: () => _goToStep(1),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: PrimaryButton(
                     label: AppStrings.next,
-                    onPressed: _step2Ready
+                    onPressed: _step3Ready
                         ? () {
-                            _goToStep(2);
+                            _goToStep(3);
                           }
                         : null,
                   ),
@@ -506,119 +568,71 @@ class _FpoRegistrationFlowScreenState extends State<FpoRegistrationFlowScreen> {
     );
   }
 
-  Widget _buildStepThree(BuildContext context) {
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SectionHeader(
-            title: AppStrings.documentsStep,
-              subtitle: AppStrings.documentsSubtitle,
-          ),
-          const SizedBox(height: 16),
-          UploadCard(
-            title: AppStrings.uploadCertificate,
-            description: AppStrings.uploadHint,
-            fileName: _certificateFileName,
-            onPressed: () => _pickMockFile(isPrimary: true),
-          ),
-          const SizedBox(height: 12),
-          UploadCard(
-            title: AppStrings.additionalDocument,
-            description: AppStrings.additionalDocumentOptional,
-            fileName: _additionalDocumentFileName,
-            onPressed: () => _pickMockFile(isPrimary: false),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: SecondaryButton(
-                  label: AppStrings.previous,
-                  onPressed: () => _goToStep(1),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: PrimaryButton(
-                  label: AppStrings.next,
-                  onPressed: _step3Ready
-                      ? () {
-                          _goToStep(3);
-                        }
-                      : null,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildStepFour(BuildContext context) {
     return Form(
       key: _reviewKey,
       child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SectionHeader(
-              title: AppStrings.reviewTitle,
-              subtitle: AppStrings.reviewSubtitle,
-            ),
-            const SizedBox(height: 16),
-            AppCard(
-              padding: const EdgeInsets.all(16),
-              backgroundColor: AppColors.background,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionHeader(
+                title: AppStrings.reviewTitle,
+                subtitle: AppStrings.reviewSubtitle,
+              ),
+              const SizedBox(height: 16),
+              AppCard(
+                padding: const EdgeInsets.all(16),
+                backgroundColor: AppColors.background,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SummaryRow(label: AppStrings.fpoNameLabel, value: _fpoNameController.text.trim()),
+                    _SummaryRow(label: AppStrings.registrationNumberLabel, value: _registrationNumberController.text.trim()),
+                    _SummaryRow(label: AppStrings.stateLabel, value: _selectedState ?? '-'),
+                    _SummaryRow(label: AppStrings.districtLabel, value: _selectedDistrict ?? '-'),
+                    _SummaryRow(label: AppStrings.addressLabel, value: _addressController.text.trim()),
+                    _SummaryRow(label: AppStrings.mobileLabel, value: _mobileController.text.trim()),
+                    _SummaryRow(label: AppStrings.uploadCertificate, value: _certificateFileName ?? '-'),
+                    _SummaryRow(label: AppStrings.additionalDocument, value: _additionalDocumentFileName ?? 'Not added'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              CheckboxListTile(
+                value: _confirmDetails,
+                onChanged: (value) {
+                  setState(() {
+                    _confirmDetails = value ?? false;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                title: const Text(AppStrings.confirmCorrect),
+              ),
+              const SizedBox(height: 12),
+              StatusChip(label: AppStrings.pendingApproval, isActive: true),
+              const SizedBox(height: 20),
+              Row(
                 children: [
-                  _SummaryRow(label: AppStrings.fpoNameLabel, value: _fpoNameController.text.trim()),
-                  _SummaryRow(label: AppStrings.registrationNumberLabel, value: _registrationNumberController.text.trim()),
-                  _SummaryRow(label: AppStrings.stateLabel, value: _selectedState ?? '-'),
-                  _SummaryRow(label: AppStrings.districtLabel, value: _selectedDistrict ?? '-'),
-                  _SummaryRow(label: AppStrings.addressLabel, value: _addressController.text.trim()),
-                  _SummaryRow(label: AppStrings.mobileLabel, value: _mobileController.text.trim()),
-                  _SummaryRow(label: AppStrings.uploadCertificate, value: _certificateFileName ?? '-'),
-                  _SummaryRow(label: AppStrings.additionalDocument, value: _additionalDocumentFileName ?? 'Not added'),
+                  Expanded(
+                    child: SecondaryButton(
+                      label: AppStrings.previous,
+                      onPressed: () => _goToStep(2),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: AppStrings.submit,
+                      isLoading: _submitting,
+                      onPressed: _step4Ready && !_submitting ? _submit : null,
+                    ),
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            CheckboxListTile(
-              value: _confirmDetails,
-              onChanged: (value) {
-                setState(() {
-                  _confirmDetails = value ?? false;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.zero,
-              title: const Text(AppStrings.confirmCorrect),
-            ),
-            const SizedBox(height: 12),
-            StatusChip(label: AppStrings.pendingApproval, isActive: true),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: SecondaryButton(
-                    label: AppStrings.previous,
-                    onPressed: () => _goToStep(2),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: PrimaryButton(
-                    label: AppStrings.submit,
-                    isLoading: _submitting,
-                    onPressed: _step4Ready && !_submitting ? _submit : null,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

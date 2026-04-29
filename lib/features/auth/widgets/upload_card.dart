@@ -35,7 +35,7 @@ class UploadCard extends StatelessWidget {
               height: 52,
               width: 52,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(Icons.cloud_upload_outlined, color: AppColors.primary),
